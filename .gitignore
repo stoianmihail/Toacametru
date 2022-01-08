@@ -1,4 +1,5 @@
 .firebaserc
+recordings/
 private-key.json
 
 # Byte-compiled / optimized / DLL files
