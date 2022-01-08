@@ -1,0 +1,9 @@
+firebase_admin
+flask
+Flask-SSLify
+numpy==1.19.2
+scipy
+librosa
+gunicorn
+pandas
+pydub

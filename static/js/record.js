@@ -27,6 +27,14 @@ var start_ = null;
 var pause_ = null;
 var total_pause_ = 0;
 
+function displayStatistics(statistics) {
+	let ret = ``;
+	for (const [key, value] of Object.entries(statistics)) {
+		ret += `<p>${key}: ${value.toFixed(2)}</p>`;
+	}
+	document.getElementById('result').innerHTML = ret;
+}
+
 function enable() {
   console.log("Recording started!");
 
@@ -163,9 +171,11 @@ function stopRecording() {
 	rec.exportWAV(createDownloadLink);
 }
 
+/*
 async function uploadRecordingToStorage(blob, filename) {
   return storage.ref('recordings').child(filename).put(blob);
 }
+*/
 
 function createDownloadLink(blob) {
   console.log(blob);
@@ -218,7 +228,7 @@ function createDownloadLink(blob) {
 
 		// Reset the tone.
 		// TODO: save it to the right of the saved recording!
-		document.getElementById('tone').innerHTML = ``;
+		document.getElementById('result').innerHTML = ``;
       
     const formData = new FormData();
     formData.append('audio', blob, 'recording');
@@ -229,7 +239,7 @@ function createDownloadLink(blob) {
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
-      document.getElementById('tone').innerHTML = data['tone'];
+			displayStatistics(data['statistics']);
     }).catch((err) => {
       console.error(err);
       alert('An error occurred, please try again later!');

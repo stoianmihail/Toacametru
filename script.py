@@ -1,5 +1,7 @@
+from os import stat
 import sys
 import numpy as np
+from six import string_types
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
@@ -8,7 +10,8 @@ from src.audio_hack import Audio
 def compute_statistics(dist, onset_frames):
   statistics = {
     'max_beats' : 0,
-    'avg_beats' : 0
+    'avg_beats' : 0,
+    'total' : 0
   }
   
   print(f'dist={dist}')
@@ -24,6 +27,9 @@ def compute_statistics(dist, onset_frames):
 
   # Average number of beats.
   statistics['avg_beats'] = len(onset_frames) / time_dist(0, len(onset_frames) - 1)
+
+  # Total number of beats.
+  statistics['total'] = len(onset_frames)
 
   # Fix the first window.
   l, r = 0, 0

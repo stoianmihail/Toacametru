@@ -18,13 +18,13 @@ else:
 
 # And initialize the app.
 firebase_admin.initialize_app(cred, {
-  'databaseURL': 'https://hyper-tone-default-rtdb.firebaseio.com',
-  'storageBucket': 'hyper-tone.appspot.com',
+  'databaseURL': 'https://toacametru-default-rtdb.firebaseio.com',
+  'storageBucket': 'toacametru.appspot.com',
 })
 
 # Load the model.
-from src.predict import HyperTone
-ht = HyperTone(f'model/model-1634386470.hdf5')
+from src.solver import Solver
+solver = Solver()
 
 # Initialize the Flask app.
 app = flask.Flask(__name__, template_folder='templates', static_folder='static')
@@ -63,53 +63,21 @@ def record():
     AudioSegment.from_wav(wavFilepath).export(mp3Filepath, format='mp3')
 
     # Predict the tone.
-    prediction = ht.predict(mp3Filepath, 'file')
-    print(prediction)
+    statistics = solver.analyze(mp3Filepath)
+    print(statistics)
     
-    # TODO: add into DB.
     # Store the recording.
     storage.bucket().blob(f'recordings/{filename}.mp3').upload_from_filename(mp3Filepath);
 
     # And return the result.
     # TODO: return the db key.
-    return {'tone' : int(prediction), 'success' : True}
+    return {'statistics' : statistics, 'success' : True}
 
 # Set up the main route
 @app.route('/', methods=['GET', 'POST'])
 def main():
-  print(f"Inside: {flask.request.method}")
   if flask.request.method == 'GET':
-    print(flask.request)
-    # Just render the initial form, to get input
     return(flask.render_template('index.html'))
-
-  if flask.request.method == 'POST':
-
-    print(flask.request.form['audio'])
-
-    # Extract the input
-    temperature = flask.request.form['temperature']
-    humidity = flask.request.form['humidity']
-    windspeed = flask.request.form['windspeed']
-
-    # Make DataFrame for model
-    input_variables = pd.DataFrame([[temperature, humidity, windspeed]],
-                                    columns=['temperature', 'humidity', 'windspeed'],
-                                    dtype=float,
-                                    index=['input'])
-
-    # Get the model's prediction
-    prediction = ht.predict('samples/Ceea-ce-esti-mai-cinstita_1.m4a')
-    #model.predict(input_variables)[0]
-
-    # Render the form again, but add in the prediction and remind user
-    # of the values they input before
-    return flask.render_template('index.html',
-                                  original_input={'Temperature':temperature,
-                                                  'Humidity':humidity,
-                                                  'Windspeed':windspeed},
-                                  result=prediction,
-                                  )
 
 if __name__ == '__main__':
   app.run()
