@@ -36,13 +36,13 @@ class Solver:
     l, r = 0, 0
     while r != len(onset_frames) and time_dist(l, r) <= 1.0:
       r += 1
-    r += 1
 
     # Corner case
-    report(l, r - 1)
+    report(l, r)
 
     # Get the next ones.
-    while r != len(onset_frames):
+    r += 1
+    while r < len(onset_frames):
       # Get rid of previous frames.
       while l != r and time_dist(l, r) > 1.0:
         l += 1
