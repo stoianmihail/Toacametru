@@ -79,5 +79,8 @@ def main():
   if flask.request.method == 'GET':
     return(flask.render_template('index.html'))
 
+  if flask.request.method == 'POST':
+    return None
+
 if __name__ == '__main__':
   app.run()
